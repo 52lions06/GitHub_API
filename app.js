@@ -3,17 +3,11 @@ var YOUTUBE_SEARCH_URL = 'https://www.googleapis.com/youtube/v3/search';
 
 var RESULT_HTML_TEMPLATE = (
   '<div class="js-search-results">' +
-    '<img class="js-result-thumbnail" src="">' +
+    '<a class="js-thumbnail-link" href=""><img class="js-result-thumbnail" src=""></a>' +
       '<h3 class="js-video-title"></h3>' +
-      //'<p>Number of views: <span class="js-video-views"></span></p>' +
       '<p>Description: <span class="js-video-description"><span></p>' +
+      '<p>More results from <a class="js-channel-link" href="">this channel</a></p>' +
   '</div>'
-  //'<div>' +
-    //'<h2>' +
-    //'<a class="js-result-name" href="" target="_blank"></a> by <a class="js-user-name" href="" target="_blank"></a></h2>' +
-    // '<p>Number of watchers: <span class="js-watchers-count"></span></p>' +
-    //'<p>Number of open issues: <span class="js-issues-count"></span></p>' +
-  //'</div>'
 );
 
 function getDataFromApi(searchTerm, callback) {
@@ -23,6 +17,7 @@ function getDataFromApi(searchTerm, callback) {
     q: searchTerm
   }
   $.getJSON(YOUTUBE_SEARCH_URL, query, function(response){
+    console.log(response.items[0]);
     displayYoutubeSearchData(response);
     
   });
@@ -41,10 +36,15 @@ function renderResult(item) {
   var videoThumbnail = item.snippet.thumbnails.default.url;
   var videoTitle = item.snippet.title;
   var videoDescription = item.snippet.description;
+  var videoID = item.id.videoId;
+  var channelLink = item.snippet.channelTitle;
+  var videoURL = 'https://www.youtube.com/watch?v='+videoID;
+  var channelURL = 'https://www.youtube.com/user/'+channelLink;
   template.find(".js-result-thumbnail").attr("src", videoThumbnail);
   template.find(".js-video-title").text(videoTitle);
-  //template.find(".js-video-views").text(result.watchers_count);
   template.find(".js-video-description").text(videoDescription);
+  template.find(".js-thumbnail-link").attr("href", videoURL);
+  template.find(".js-channel-link").attr("href", channelURL);
   return template;
 }
 
